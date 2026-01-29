@@ -32,3 +32,11 @@ Die führende lokale Plattform in Deutschland für Wiederverwendung, Second-Hand
 git clone https://github.com/hichamhannouda-afk/gibsweiter.git
 cd gibsweiter
 cp .env.example .env
+docker-compose up -d
+pnpm install   # oder npm install
+pnpm db:push
+pnpm seed
+pnpm dev
+Im Browser öffnen:
+
+http://localhost:3000
