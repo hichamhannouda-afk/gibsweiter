@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: gibs
+      POSTGRES_USER: gibs
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgres://gibs:change-me-strong@db:5432/gibs
+      PORT: 3000
+    # IMPORTANTE: para producción, luego quitamos este puerto público y lo dejamos solo por Traefik
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gibsapi.rule=Host(`api.gibsweiter.de`)
+      - traefik.http.routers.gibsapi.entrypoints=websecure
+      - traefik.http.routers.gibsapi.tls=true
+      - traefik.http.routers.gibsapi.tls.certresolver=mytlschallenge
+      - traefik.http.services.gibsapi.loadbalancer.server.port=3000
+
+    networks:
+      - default
+      - root_default
+
+volumes:
+  db_data:
+
+networks:
+  root_default:
+    external: true
+

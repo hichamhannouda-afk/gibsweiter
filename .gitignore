@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+node_modules/
+*.log
+
+docker-compose.yml.bak-*
+*.bak
